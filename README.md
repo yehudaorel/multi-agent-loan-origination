@@ -111,7 +111,7 @@ The application will be available at the following URLs:
 | API Server | http://localhost:8000 |
 | API Docs (Swagger) | http://localhost:8000/docs |
 | Database | postgresql://localhost:5433 |
-| MinIO Console | http://localhost:9091 |
+| MinIO Console | http://localhost:9191 |
 
 ### Container deployment
 

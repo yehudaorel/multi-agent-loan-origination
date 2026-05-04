@@ -531,7 +531,7 @@ Configuration follows the **12-factor app** pattern:
 | Database | `DATABASE_URL`, `COMPLIANCE_DATABASE_URL` | `postgresql+asyncpg://user:password@localhost:5433/mortgage-ai` |
 | Auth | `KEYCLOAK_URL`, `KEYCLOAK_REALM`, `KEYCLOAK_CLIENT_ID`, `AUTH_DISABLED` | `http://localhost:8080`, `mortgage-ai`, `mortgage-ai-ui`, `true` |
 | LLM | `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL` | `https://api.openai.com/v1`, `not-needed`, `gpt-4o-mini` |
-| Storage | `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_BUCKET` | `http://localhost:9090`, `minio`, `miniosecret`, `documents` |
+| Storage | `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_BUCKET` | `http://localhost:9190`, `minio`, `miniosecret`, `documents` |
 | Observability | `MLFLOW_TRACKING_URI`, `MLFLOW_EXPERIMENT_NAME`, `MLFLOW_TRACKING_TOKEN` | (unset -- tracing disabled) |
 
 ## Extension Points
