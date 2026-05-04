@@ -120,6 +120,12 @@ services:
       retries: 3
       start_period: 10s
 
+  # MCP servers expose host ports in the 18081-18085 range to avoid
+  # collisions with the crowded 8000s (McAfee 8081, GlassFish 8181,
+  # various web admin panels). Container-internal ports stay 8081-8085
+  # so the API service's MCP_*_URL env vars and the OpenCLAW workspace's
+  # `mcp-*:808x` service URLs are unaffected. Only host-side curls and
+  # OpenCLAW-running-on-host configs need the 18000-range URLs.
   mcp-risk-server:
     build:
       context: .
@@ -128,7 +134,7 @@ services:
       com.quickstart.package: api
     command: python -m src.mcp_server
     ports:
-      - "8081:8081"
+      - "18081:8081"
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8081/health')\""]
       interval: 10s
@@ -150,7 +156,7 @@ services:
       com.quickstart.package: api
     command: python -m src.mcp_compliance
     ports:
-      - "8082:8082"
+      - "18082:8082"
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8082/health')\""]
       interval: 10s
@@ -169,7 +175,7 @@ services:
       com.quickstart.package: api
     command: python -m src.mcp_pipeline
     ports:
-      - "8083:8083"
+      - "18083:8083"
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8083/health')\""]
       interval: 10s
@@ -187,7 +193,7 @@ services:
       com.quickstart.package: api
     command: python -m src.mcp_decision
     ports:
-      - "8084:8084"
+      - "18084:8084"
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8084/health')\""]
       interval: 10s
@@ -205,7 +211,7 @@ services:
       com.quickstart.package: api
     command: python -m src.mcp_analytics
     ports:
-      - "8085:8085"
+      - "18085:8085"
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8085/health')\""]
       interval: 10s
