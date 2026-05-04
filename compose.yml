@@ -79,6 +79,10 @@ services:
       MLFLOW_TRACKING_URI: "${MLFLOW_TRACKING_URI:-http://mlflow:5000}"
       MLFLOW_EXPERIMENT_NAME: "${MLFLOW_EXPERIMENT_NAME:-mortgage-ai}"
       MCP_RISK_SERVER_URL: http://mcp-risk-server:8081/mcp
+      MCP_COMPLIANCE_URL: http://mcp-compliance:8082/mcp
+      MCP_PIPELINE_URL: http://mcp-pipeline:8083/mcp
+      MCP_DECISION_URL: http://mcp-decision:8084/mcp
+      MCP_ANALYTICS_URL: http://mcp-analytics:8085/mcp
       PREDICTIVE_MODEL_MCP_URL: "${PREDICTIVE_MODEL_MCP_URL:-}"
       COMPANY_NAME: "${COMPANY_NAME:-Acme FinTech Company}"
       AGENT_NAME: "${AGENT_NAME:-}"
@@ -127,6 +131,83 @@ services:
       - "8081:8081"
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8081/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # mcp-compliance hosts public-tier tools (product catalog, affordability,
+  # current_date) plus compliance tools for authenticated agents (kb_search,
+  # regulatory_deadlines, compliance_check, disclosure ack/status, LE/CD
+  # generation, adverse action drafting). Track 1 ships fully-implemented
+  # public-tier tools; the rest are skeletons pending Track 2 implementation.
+  # See openclaw-workspace/TOOLS.md.
+  mcp-compliance:
+    build:
+      context: .
+      dockerfile: packages/api/Containerfile
+    labels:
+      com.quickstart.package: api
+    command: python -m src.mcp_compliance
+    ports:
+      - "8082:8082"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8082/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # mcp-pipeline hosts application-state, document, and queue tools for the
+  # Borrower, Loan Officer, and Underwriter agents. Skeleton in Track 1; full
+  # implementation in Track 2.
+  mcp-pipeline:
+    build:
+      context: .
+      dockerfile: packages/api/Containerfile
+    labels:
+      com.quickstart.package: api
+    command: python -m src.mcp_pipeline
+    ports:
+      - "8083:8083"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8083/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # mcp-decision hosts condition-lifecycle tools and the two-phase decision
+  # rendering tool for the Borrower and Underwriter agents. Skeleton in Track 1.
+  mcp-decision:
+    build:
+      context: .
+      dockerfile: packages/api/Containerfile
+    labels:
+      com.quickstart.package: api
+    command: python -m src.mcp_decision
+    ports:
+      - "8084:8084"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8084/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # mcp-analytics hosts read-only pipeline analytics, audit search, and model
+  # monitoring tools for the CEO agent. Skeleton in Track 1.
+  mcp-analytics:
+    build:
+      context: .
+      dockerfile: packages/api/Containerfile
+    labels:
+      com.quickstart.package: api
+    command: python -m src.mcp_analytics
+    ports:
+      - "8085:8085"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8085/health')\""]
       interval: 10s
       timeout: 5s
       retries: 5

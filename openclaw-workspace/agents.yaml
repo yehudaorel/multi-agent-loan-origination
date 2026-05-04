@@ -1,0 +1,90 @@
+# Agent manifest for the Computex demo workspace.
+# Format mirrors the shenhao-stu/openclaw-agents pattern; fields documented inline.
+
+project:
+  name: "computex-mortgage-demo"
+  version: "0.1.0"
+  description: "Autonomous mortgage officer demo on Xeon 6+ Clearwater Forest"
+  default_model: "openai-compatible/qwen3-30b-a3b"
+
+# id:        unique agent identifier; matches the directory under agents/
+# name:      human-readable display name
+# role:      brief role description
+# persona:   maps to the role enum used by the existing repo (prospect | borrower | loan_officer | underwriter | ceo)
+# model:     overrides project.default_model when set
+# protected: core agent that should not be removed by automated tooling
+# workspace: path to the agent's directory (relative to this file)
+# default:   default agent when no routing rule matches
+# auth:      "none" or "jwt"; informs whether sandbox isolation is required
+# sandbox:   "off" | "on"; off only for the public-facing prospect agent
+agents:
+  - id: "public-assistant"
+    name: "Public Assistant"
+    role: "Public-facing assistant for product info and affordability estimates"
+    persona: "prospect"
+    workspace: "agents/public-assistant"
+    auth: "none"
+    sandbox: "off"
+    default: true
+    protected: true
+
+  - id: "borrower-assistant"
+    name: "Borrower Assistant"
+    role: "Application intake, document upload, and status for authenticated borrowers"
+    persona: "borrower"
+    workspace: "agents/borrower-assistant"
+    auth: "jwt"
+    sandbox: "on"
+    protected: true
+
+  - id: "loan-officer-assistant"
+    name: "Loan Officer Assistant"
+    role: "Pipeline management, urgency scoring, and KB search for loan officers"
+    persona: "loan_officer"
+    workspace: "agents/loan-officer-assistant"
+    auth: "jwt"
+    sandbox: "on"
+    protected: true
+
+  - id: "underwriter-assistant"
+    name: "Underwriter Assistant"
+    role: "Risk assessment, condition lifecycle, decisioning, compliance checks"
+    persona: "underwriter"
+    workspace: "agents/underwriter-assistant"
+    auth: "jwt"
+    sandbox: "on"
+    protected: true
+
+  - id: "ceo-assistant"
+    name: "CEO Assistant"
+    role: "Executive analytics with PII masking and audit trail visualization"
+    persona: "ceo"
+    workspace: "agents/ceo-assistant"
+    auth: "jwt"
+    sandbox: "on"
+    protected: true
+
+# Channel routing for the WebChat surface. Path-based routing mirrors the
+# upstream FastAPI WebSocket routes so the existing React UI keeps its
+# WebSocket targets unchanged.
+bindings:
+  - agentId: "public-assistant"
+    match:
+      channel: "webchat"
+      path: "/chat"
+  - agentId: "borrower-assistant"
+    match:
+      channel: "webchat"
+      path: "/borrower/chat"
+  - agentId: "loan-officer-assistant"
+    match:
+      channel: "webchat"
+      path: "/loan-officer/chat"
+  - agentId: "underwriter-assistant"
+    match:
+      channel: "webchat"
+      path: "/underwriter/chat"
+  - agentId: "ceo-assistant"
+    match:
+      channel: "webchat"
+      path: "/ceo/chat"

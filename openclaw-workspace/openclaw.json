@@ -1,0 +1,60 @@
+{
+  "$comment": "OpenCLAW gateway config for the Computex demo workspace. This shape follows the documented pattern '{ agent: { model: \"<provider>/<model-id>\" } }' from the OpenCLAW README; channel and MCP fields are best-effort and should be reconciled with the framework's runtime expectations on first boot.",
+  "agent": {
+    "model": "openai-compatible/${LLM_MODEL:-qwen3-30b-a3b}",
+    "fallback": "openai-compatible/${LLM_MODEL:-qwen3-30b-a3b}"
+  },
+  "providers": {
+    "openai-compatible": {
+      "baseUrl": "${LLM_BASE_URL:-http://localhost:1234/v1}",
+      "apiKey": "${LLM_API_KEY:-not-needed}"
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "verbose": true
+  },
+  "channels": {
+    "webchat": {
+      "enabled": true,
+      "path": "/ws"
+    },
+    "telegram": {
+      "enabled": false,
+      "dmPolicy": "pairing"
+    }
+  },
+  "mcp": {
+    "servers": {
+      "risk": {
+        "url": "${MCP_RISK_SERVER_URL:-http://mcp-risk-server:8081/mcp}",
+        "transport": "streamable-http"
+      },
+      "compliance": {
+        "url": "${MCP_COMPLIANCE_URL:-http://mcp-compliance:8082/mcp}",
+        "transport": "streamable-http"
+      },
+      "pipeline": {
+        "url": "${MCP_PIPELINE_URL:-http://mcp-pipeline:8083/mcp}",
+        "transport": "streamable-http"
+      },
+      "decision": {
+        "url": "${MCP_DECISION_URL:-http://mcp-decision:8084/mcp}",
+        "transport": "streamable-http"
+      },
+      "analytics": {
+        "url": "${MCP_ANALYTICS_URL:-http://mcp-analytics:8085/mcp}",
+        "transport": "streamable-http"
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "workspace": ".",
+      "sandbox": {
+        "mode": "non-main",
+        "backend": "docker"
+      }
+    }
+  }
+}
